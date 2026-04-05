@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp -r /c/Users/teech/Antigravity/tmp_eventflow/app /c/Users/teech/Antigravity/EventFlow/)",
+      "Bash(cp -r /c/Users/teech/Antigravity/tmp_eventflow/public /c/Users/teech/Antigravity/EventFlow/)",
+      "Bash(cp -r /c/Users/teech/Antigravity/tmp_eventflow/node_modules /c/Users/teech/Antigravity/EventFlow/)",
+      "Bash(cp /c/Users/teech/Antigravity/tmp_eventflow/package.json /c/Users/teech/Antigravity/EventFlow/)",
+      "Bash(cp /c/Users/teech/Antigravity/tmp_eventflow/package-lock.json /c/Users/teech/Antigravity/EventFlow/)",
+      "Bash(npm install:*)",
+      "Bash(npx playwright:*)",
+      "Bash(npx shadcn@latest init --defaults)"
+    ]
+  }
+}
