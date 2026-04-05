@@ -29,4 +29,19 @@ describe('Domain Types', () => {
   it('EventStatus enthält cancelled', () => {
     expectTypeOf<'cancelled'>().toMatchTypeOf<EventStatus>()
   })
+
+  it('ProductionTemplate hat die erwarteten Felder', () => {
+    expectTypeOf<ProductionTemplate>().toHaveProperty('id')
+    expectTypeOf<ProductionTemplate>().toHaveProperty('roleTemplates')
+  })
+
+  it('Role hat die erwarteten Felder', () => {
+    expectTypeOf<Role>().toHaveProperty('eventId')
+    expectTypeOf<Role>().toHaveProperty('assignedPersonId')
+  })
+
+  it('Skill ist ein String-Literal-Typ', () => {
+    const s: Skill = 'camera'
+    expectTypeOf(s).toMatchTypeOf<Skill>()
+  })
 })
