@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { Button } from '@/components/ui/button'
+import { TallyHeader } from '@/components/ui/tally-header'
 
 describe('Button', () => {
   beforeEach(() => {
@@ -38,5 +39,22 @@ describe('Button', () => {
     fireEvent.click(screen.getByRole('button'))
     expect(onClick).toHaveBeenCalledOnce()
     expect(navigator.vibrate).toHaveBeenCalledWith(10)
+  })
+})
+
+describe('TallyHeader', () => {
+  it('renders a stripe element', () => {
+    const { container } = render(<TallyHeader status="live" />)
+    expect(container.firstChild).toBeInTheDocument()
+  })
+
+  it('uses tally-red class for live status', () => {
+    const { container } = render(<TallyHeader status="live" />)
+    expect(container.firstChild).toHaveClass('bg-tally-red')
+  })
+
+  it('uses signal-green class for checked-in status', () => {
+    const { container } = render(<TallyHeader status="checked-in" />)
+    expect(container.firstChild).toHaveClass('bg-signal-green')
   })
 })
