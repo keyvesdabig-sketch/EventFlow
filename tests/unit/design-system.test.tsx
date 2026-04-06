@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { Button } from '@/components/ui/button'
 import { TallyHeader } from '@/components/ui/tally-header'
+import { ProductionChip } from '@/components/ui/production-chip'
 
 describe('Button', () => {
   beforeEach(() => {
@@ -56,5 +57,27 @@ describe('TallyHeader', () => {
   it('uses signal-green class for checked-in status', () => {
     const { container } = render(<TallyHeader status="checked-in" />)
     expect(container.firstChild).toHaveClass('bg-signal-green')
+  })
+})
+
+describe('ProductionChip', () => {
+  it('renders the label text', () => {
+    render(<ProductionChip label="EVS" />)
+    expect(screen.getByText('EVS')).toBeInTheDocument()
+  })
+
+  it('applies tally-red text class for live variant', () => {
+    render(<ProductionChip label="LIVE" variant="live" />)
+    expect(screen.getByText('LIVE')).toHaveClass('text-tally-red')
+  })
+
+  it('applies signal-green text class for confirmed variant', () => {
+    render(<ProductionChip label="OK" variant="confirmed" />)
+    expect(screen.getByText('OK')).toHaveClass('text-signal-green')
+  })
+
+  it('applies pending-amber text class for pending variant', () => {
+    render(<ProductionChip label="PENDING" variant="pending" />)
+    expect(screen.getByText('PENDING')).toHaveClass('text-pending-amber')
   })
 })
