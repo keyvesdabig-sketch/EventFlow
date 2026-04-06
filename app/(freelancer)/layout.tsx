@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { TopBar } from '@/components/ui/top-bar'
 
 export default async function FreelancerLayout({
   children,
@@ -20,8 +21,9 @@ export default async function FreelancerLayout({
   if (person?.role !== 'freelancer') redirect('/dashboard')
 
   return (
-    <div className="min-h-screen bg-white max-w-lg mx-auto">
-      <main className="px-4 py-6">
+    <div className="min-h-screen bg-background max-w-lg mx-auto">
+      <TopBar userName={person?.name} />
+      <main className="px-4 py-6 pb-24">
         {children}
       </main>
     </div>

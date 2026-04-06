@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { TopBar } from '@/components/ui/top-bar'
 
 export default async function OwnerLayout({
   children,
@@ -20,13 +21,8 @@ export default async function OwnerLayout({
   if (person?.role !== 'owner') redirect('/home')
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-white border-b border-slate-200 px-6 py-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <span className="font-semibold text-slate-900">EventFlow</span>
-          <span className="text-sm text-slate-500">{person?.name}</span>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background">
+      <TopBar userName={person?.name} />
       <main className="max-w-6xl mx-auto px-6 py-8">
         {children}
       </main>
