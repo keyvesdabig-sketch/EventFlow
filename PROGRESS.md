@@ -34,6 +34,29 @@ Alle 11 Tasks implementiert, reviewed und committed.
 
 ---
 
+## Abgeschlossene Pläne (Fortsetzung)
+
+### Design System: "Kinetic Control Room" ✅
+Alle 10 Tasks implementiert, reviewed und committed. Gemergt in `master` am 2026-04-06.
+
+**Was gebaut wurde:**
+- Fonts: Space Grotesk (Headlines), Manrope (Body), Space Mono (Technische Daten) via `next/font/google`
+- Dark-only Theme: Nocturne `#0e0e13`, Tonal Layers Level 0–3, Ghost Border
+- Broadcast-Status-Tokens: Tally-Red `#ff7162`, Signal-Green `#00ff88`, Pending-Amber `#ffb800`
+- Utility Classes: `.label-control` (Uppercase, 0.05em), `.data-technical` (Tabular-Nums), `.ghost-border`
+- `Button`: Gradient-Variant, Haptic Feedback (`navigator.vibrate(10)`)
+- `TallyHeader`: 4px Stripe (live = rot, checked-in = grün)
+- `ProductionChip`: Uppercase Chips für Rollen/Skills (EVS, CAM 1, etc.)
+- `TopBar`: Glassmorphism Nav (backdrop-blur-24px), sticky
+- Login-Seite: Asymmetrisches "Kinetic Control Room" Design
+- Alle Layouts auf Dark Theme migriert
+- 18 Unit-Tests grün
+
+**Spec:** `Design.md`  
+**Plan:** `docs/superpowers/plans/2026-04-05-design-system.md`
+
+---
+
 ## Offene Pläne
 
 ### Plan 2: Template & Event Management (ausstehend)
