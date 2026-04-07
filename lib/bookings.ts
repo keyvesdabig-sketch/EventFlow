@@ -34,5 +34,6 @@ export function checkAllRolesConfirmed(roles: Role[], bookings: Booking[]): bool
  */
 export async function transitionEventStatus(eventId: string, status: EventStatus): Promise<void> {
   const supabase = await createClient()
-  await supabase.from('events').update({ status }).eq('id', eventId)
+  const { error } = await supabase.from('events').update({ status }).eq('id', eventId)
+  if (error) throw new Error(`Failed to transition event to '${status}': ${error.message}`)
 }
