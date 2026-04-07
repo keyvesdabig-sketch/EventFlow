@@ -1,8 +1,8 @@
 # EventFlow — Progress
 
-## Status: Plan 1 (Foundation) abgeschlossen
+## Status: Plan 2 (Template & Event Management) abgeschlossen
 
-**Letzter Stand:** 2026-04-05
+**Letzter Stand:** 2026-04-06
 
 ---
 
@@ -57,15 +57,28 @@ Alle 10 Tasks implementiert, reviewed und committed. Gemergt in `master` am 2026
 
 ---
 
-## Offene Pläne
+### Plan 2: Template & Event Management ✅
+Alle 12 Tasks implementiert, reviewed und committed. Feature-Branch: `feature/plan2-template-events`
 
-### Plan 2: Template & Event Management (ausstehend)
-Nächste Schritte:
-- `lib/supabase/types.ts` generieren via `npx supabase gen types typescript --project-id lvdezpdhjnbppphboxyd`
-- DB↔TypeScript Mapper (snake_case → camelCase) in `lib/supabase/mappers.ts`
-- Person–User Verknüpfung beim ersten Freelancer-Login (Auth Callback erweitern)
-- CRUD für `production_templates` (Owner-Seite)
-- CRUD für `events` aus Templates (Owner-Seite)
+**Was gebaut wurde:**
+- `lib/supabase/types.ts` — generierte DB-Typen via Supabase CLI
+- `lib/supabase/mappers.ts` — Mapper für alle 5 Tabellen (snake_case → camelCase), 5 Unit-Tests
+- `lib/auth-linking.ts` — `linkPersonToUser()`: verknüpft Freelancer-Login mit persons-Row, 3 Unit-Tests
+- `lib/events.ts` — `materializeRoles()`: erstellt Role-Rows aus RoleTemplates, 3 Unit-Tests
+- `app/auth/callback/route.ts` — erweitert mit Person-User-Linking beim ersten Login
+- `app/(owner)/layout.tsx` — Nav-Links (Dashboard / Templates) in TopBar
+- `app/(owner)/dashboard/page.tsx` — Event-Liste mit Status-Chips (draft/booking/confirmed/live/completed/cancelled)
+- `app/(owner)/templates/page.tsx` — Template-Liste (read-only)
+- `app/(owner)/templates/[id]/page.tsx` — Template-Detail mit Phasen und Rollen
+- `app/(owner)/events/new/page.tsx` + `wizard.tsx` — 3-Step Event-Erstellungs-Wizard
+- `app/(owner)/events/new/actions.ts` — Server Action: Event + Roles in DB speichern
+- `app/(owner)/events/[id]/page.tsx` — Event-Detail mit Zeitplan, Venue, Rollen
+
+**Total: 29 Unit-Tests grün (inkl. 11 neue aus Plan 2)**
+
+---
+
+## Offene Pläne
 
 ### Plan 3: Booking Flow + Dashboard (ausstehend)
 - Anfragen senden (Owner → Freelancer)
