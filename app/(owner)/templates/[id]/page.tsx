@@ -64,7 +64,7 @@ export default async function TemplateDetailPage({
               className="flex items-center justify-between ghost-border rounded-lg bg-level-1 px-5 py-3"
             >
               <div className="flex items-center gap-3">
-                <ProductionChip>{rt.title}</ProductionChip>
+                <ProductionChip label={rt.title} />
                 {rt.count > 1 && (
                   <span className="data-technical text-xs text-muted-foreground">
                     × {rt.count}
