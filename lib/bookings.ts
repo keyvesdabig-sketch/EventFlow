@@ -1,5 +1,4 @@
-import type { Booking, Role, EventStatus } from './types'
-import { createClient } from './supabase/server'
+import type { Booking, Role } from './types'
 
 export type RoleBookingStatus = 'open' | 'requested' | 'confirmed' | 'declined'
 
@@ -27,13 +26,4 @@ export function getRoleBookingStatus(bookings: Booking[], roleId: string): RoleB
 export function checkAllRolesConfirmed(roles: Role[], bookings: Booking[]): boolean {
   if (roles.length === 0) return false
   return roles.every(role => getRoleBookingStatus(bookings, role.id) === 'confirmed')
-}
-
-/**
- * Setzt den Event-Status in der DB. Shared helper, aufgerufen von Owner- und Freelancer-Actions.
- */
-export async function transitionEventStatus(eventId: string, status: EventStatus): Promise<void> {
-  const supabase = await createClient()
-  const { error } = await supabase.from('events').update({ status }).eq('id', eventId)
-  if (error) throw new Error(`Failed to transition event to '${status}': ${error.message}`)
 }
