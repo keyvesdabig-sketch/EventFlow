@@ -37,7 +37,7 @@ export function BookingSection({
   const [isPending, startTransition] = useTransition()
   const [serverError, setServerError] = useState<string | null>(null)
 
-  const hasSentBookings = bookings.length > 0
+  const hasAnyBookings = bookings.length > 0
 
   // Realtime-Subscription für Booking-Updates
   useEffect(() => {
@@ -72,7 +72,7 @@ export function BookingSection({
       .subscribe()
 
     return () => { supabase.removeChannel(channel) }
-  }, [event.id, roles])
+  }, [event.id])
 
   // Auto-Transition zu confirmed wenn alle Rollen bestätigt
   useEffect(() => {
@@ -105,6 +105,7 @@ export function BookingSection({
 
   function handleStartBooking() {
     startTransition(async () => {
+      setServerError(null)
       const result = await startBookingAction(event.id)
       if (result?.error) { setServerError(result.error); return }
       router.refresh()
@@ -114,6 +115,7 @@ export function BookingSection({
   function handleSendRequests() {
     const assignmentList = Object.entries(assignments).map(([roleId, personId]) => ({ roleId, personId }))
     startTransition(async () => {
+      setServerError(null)
       const result = await sendBookingRequests(event.id, assignmentList)
       if (result?.error) { setServerError(result.error); return }
       setAssignments({})
@@ -123,6 +125,7 @@ export function BookingSection({
 
   function handleReplace(roleId: string, personId: string) {
     startTransition(async () => {
+      setServerError(null)
       const result = await replaceBookingAction(roleId, personId)
       if (result?.error) { setServerError(result.error); return }
       setReplaceRoleId(null)
@@ -147,7 +150,7 @@ export function BookingSection({
   }
 
   // ─── Picker-Modus: Rollen zuteilen ──────────────────────────────────────────
-  if (!hasSentBookings) {
+  if (!hasAnyBookings) {
     const assignmentCount = Object.keys(assignments).length
     return (
       <div className="space-y-3">
@@ -352,7 +355,8 @@ function ReplaceRolePicker({
 }) {
   const [skillFilter, setSkillFilter] = useState<Skill[]>([])
   const filtered = persons.filter(p =>
-    skillFilter.length === 0 || skillFilter.every(s => p.skills.includes(s)),
+    p.id !== role.assignedPersonId &&
+    (skillFilter.length === 0 || skillFilter.every(s => p.skills.includes(s))),
   )
 
   return (
