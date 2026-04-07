@@ -4,6 +4,7 @@ import { ProductionChip } from '@/components/ui/production-chip'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { EventStatus } from '@/lib/types'
+import { DeleteEventButton } from './delete-button'
 
 function statusLabel(status: EventStatus): string {
   const labels: Record<EventStatus, string> = {
@@ -64,11 +65,14 @@ export default async function EventDetailPage({
             {event.title}
           </h1>
         </div>
-        <span
-          className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${statusClass(event.status)}`}
-        >
-          {statusLabel(event.status)}
-        </span>
+        <div className="flex items-center gap-3">
+          <span
+            className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${statusClass(event.status)}`}
+          >
+            {statusLabel(event.status)}
+          </span>
+          {event.status === 'draft' && <DeleteEventButton eventId={event.id} />}
+        </div>
       </div>
 
       {/* Phases */}
@@ -136,7 +140,7 @@ export default async function EventDetailPage({
                 key={role.id}
                 className="flex items-center justify-between ghost-border rounded-lg bg-level-1 px-5 py-3"
               >
-                <ProductionChip>{role.title}</ProductionChip>
+                <ProductionChip label={role.title} />
                 <span className="data-technical text-xs text-muted-foreground">
                   offen
                 </span>

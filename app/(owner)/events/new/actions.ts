@@ -15,13 +15,24 @@ export async function createEventAction(data: {
 }): Promise<{ error: string } | void> {
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Nicht authentifiziert' }
+
+  const { data: person } = await supabase
+    .from('persons')
+    .select('role')
+    .eq('user_id', user.id)
+    .single()
+
+  if (person?.role !== 'owner') return { error: 'Keine Berechtigung' }
+
   const { data: event, error } = await supabase
     .from('events')
     .insert({
       template_id: data.templateId,
       title: data.title,
-      phases: data.phases as any,
-      venue: data.venue as any,
+      phases: data.phases as unknown as Record<string, unknown>[],
+      venue: data.venue as unknown as Record<string, unknown>,
       status: 'draft',
       documents: [],
       notes: data.notes,

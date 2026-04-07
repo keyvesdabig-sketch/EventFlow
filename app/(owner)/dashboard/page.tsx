@@ -39,9 +39,14 @@ export default async function DashboardPage() {
   const { data: rows } = await supabase
     .from('events')
     .select('*')
-    .order('created_at', { ascending: false })
 
-  const events = (rows ?? []).map(eventMapper.fromDb)
+  const events = (rows ?? [])
+    .map(eventMapper.fromDb)
+    .sort((a, b) => {
+      const aDate = a.phases[0]?.startTime ?? ''
+      const bDate = b.phases[0]?.startTime ?? ''
+      return aDate.localeCompare(bDate)
+    })
 
   return (
     <div className="space-y-6">

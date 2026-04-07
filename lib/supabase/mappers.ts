@@ -1,4 +1,4 @@
-import type { Database } from './types'
+import type { Database, Json } from './types'
 import type {
   Person, ProductionTemplate, Event, Role, Booking,
   Skill, EventStatus, BookingStatus,
@@ -26,6 +26,19 @@ export const personMapper = {
       createdAt: row.created_at,
     }
   },
+  toDb(person: Person): Partial<Database['public']['Tables']['persons']['Insert']> {
+    return {
+      id: person.id,
+      user_id: person.userId,
+      name: person.name,
+      phone: person.phone,
+      email: person.email,
+      photo_url: person.photoUrl,
+      skills: person.skills,
+      notes: person.notes,
+      role: person.role,
+    }
+  },
 }
 
 export const templateMapper = {
@@ -37,6 +50,15 @@ export const templateMapper = {
       roleTemplates: (row.role_templates as unknown as RoleTemplate[]) ?? [],
       defaultVenueInfo: row.default_venue_info ?? '',
       createdAt: row.created_at,
+    }
+  },
+  toDb(template: ProductionTemplate): Database['public']['Tables']['production_templates']['Insert'] {
+    return {
+      id: template.id,
+      name: template.name,
+      phases: template.phases as unknown as Json,
+      role_templates: template.roleTemplates as unknown as Json,
+      default_venue_info: template.defaultVenueInfo,
     }
   },
 }
@@ -58,6 +80,18 @@ export const eventMapper = {
       updatedAt: row.updated_at,
     }
   },
+  toDb(event: Event): Database['public']['Tables']['events']['Insert'] {
+    return {
+      id: event.id,
+      template_id: event.templateId,
+      title: event.title,
+      phases: event.phases as unknown as Json,
+      venue: event.venue as unknown as Json,
+      status: event.status,
+      documents: event.documents as unknown as Json,
+      notes: event.notes,
+    }
+  },
 }
 
 export const roleMapper = {
@@ -68,6 +102,14 @@ export const roleMapper = {
       title: row.title,
       assignedPersonId: row.assigned_person_id,
       createdAt: row.created_at,
+    }
+  },
+  toDb(role: Role): Database['public']['Tables']['roles']['Insert'] {
+    return {
+      id: role.id,
+      event_id: role.eventId,
+      title: role.title,
+      assigned_person_id: role.assignedPersonId,
     }
   },
 }
@@ -83,6 +125,17 @@ export const bookingMapper = {
       respondedAt: row.responded_at,
       declineReason: row.decline_reason,
       createdAt: row.created_at,
+    }
+  },
+  toDb(booking: Booking): Database['public']['Tables']['bookings']['Insert'] {
+    return {
+      id: booking.id,
+      role_id: booking.roleId,
+      person_id: booking.personId,
+      status: booking.status,
+      requested_at: booking.requestedAt,
+      responded_at: booking.respondedAt,
+      decline_reason: booking.declineReason,
     }
   },
 }

@@ -4,7 +4,7 @@ export async function linkPersonToUser(
   supabase: SupabaseClient,
   userId: string,
   email: string,
-): Promise<'linked' | 'already_linked' | 'no_person'> {
+): Promise<'linked' | 'already_linked' | 'no_person' | 'error'> {
   const { data: person } = await supabase
     .from('persons')
     .select('id, user_id')
@@ -14,10 +14,11 @@ export async function linkPersonToUser(
   if (!person) return 'no_person'
   if (person.user_id) return 'already_linked'
 
-  await supabase
+  const { error } = await supabase
     .from('persons')
     .update({ user_id: userId })
     .eq('id', person.id)
 
+  if (error) return 'error'
   return 'linked'
 }
