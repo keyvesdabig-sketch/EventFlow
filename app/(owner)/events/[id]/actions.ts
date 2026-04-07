@@ -118,6 +118,14 @@ export async function replaceBookingAction(
   const { error, supabase } = await requireOwner()
   if (error || !supabase) return { error: error ?? 'Fehler' }
 
+  const { data: role } = await supabase
+    .from('roles')
+    .select('event_id')
+    .eq('id', roleId)
+    .single()
+
+  if (!role) return { error: 'Rolle nicht gefunden' }
+
   const { error: roleError } = await supabase
     .from('roles')
     .update({ assigned_person_id: newPersonId })
@@ -131,11 +139,5 @@ export async function replaceBookingAction(
 
   if (bookingError) return { error: bookingError.message }
 
-  const { data: role } = await supabase
-    .from('roles')
-    .select('event_id')
-    .eq('id', roleId)
-    .single()
-
-  if (role) revalidatePath(`/events/${role.event_id}`)
+  revalidatePath(`/events/${role.event_id}`)
 }
