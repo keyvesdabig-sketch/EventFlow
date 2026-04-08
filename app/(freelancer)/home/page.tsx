@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { bookingMapper, roleMapper, eventMapper } from '@/lib/supabase/mappers'
 import { BookingRequests } from './booking-requests'
@@ -85,9 +86,10 @@ export default async function FreelancerHomePage() {
             {confirmedBookings.map(({ booking, role, event }) => {
               const firstPhase = event.phases[0]
               return (
-                <div
+                <Link
                   key={booking.id}
-                  className="ghost-border rounded-lg bg-level-1 px-5 py-4 space-y-1"
+                  href={`/events/${event.id}`}
+                  className="ghost-border rounded-lg bg-level-1 px-5 py-4 space-y-1 block hover:bg-level-2 transition-colors"
                 >
                   <p className="font-medium text-foreground">{event.title}</p>
                   <p className="data-technical text-xs text-muted-foreground">
@@ -102,7 +104,7 @@ export default async function FreelancerHomePage() {
                   {event.venue.name && (
                     <p className="text-xs text-muted-foreground">{event.venue.name}</p>
                   )}
-                </div>
+                </Link>
               )
             })}
           </div>
