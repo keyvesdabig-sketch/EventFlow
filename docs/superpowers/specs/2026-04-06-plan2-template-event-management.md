@@ -117,9 +117,10 @@ Ersetzt den bestehenden Stub. Zeigt:
 - Phasen in Reihenfolge, erste Phase setzt den Ton für Folge-Phasen (Vorschlag: Ende = Beginn nächste)
 - Validierung: keine Überschneidungen, `endTime > startTime`
 
-**Schritt 3 — Venue bestätigen**
+**Schritt 3 — Venue & Notizen**
 - Venue-Felder aus Template vorausgefüllt: Name, Adresse, GPS, Parking, Access
 - Alle Felder editierbar
+- `notes`-Freitextfeld für Besonderheiten (optional)
 - "Speichern als Draft" → POST
 
 **Speicher-Logik (Server Action oder Route Handler):**

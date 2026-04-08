@@ -11,7 +11,7 @@ Implementierungspläne: `docs/superpowers/plans/`
 
 ## Stack
 
-- **Framework:** Next.js 14 (App Router), TypeScript
+- **Framework:** Next.js 16 (App Router), TypeScript
 - **Styling:** Tailwind CSS + shadcn/ui
 - **Backend/DB:** Supabase (Postgres, Auth, Realtime)
 - **Unit Tests:** Vitest + React Testing Library
@@ -37,18 +37,13 @@ npx supabase gen types typescript --project-id DEIN-PROJEKT-ID > lib/supabase/ty
 
 ## Architektur
 
-### Route-Gruppen (App Router)
+### Next.js 16 Eigenheiten
 
-```
-app/
-├── (auth)/login/        # Magic-Link Login, kein Nav
-├── (owner)/dashboard/   # Geschützt: nur role='owner'
-├── (freelancer)/home/   # Geschützt: nur role='freelancer'
-├── auth/callback/       # Supabase OAuth Callback
-└── page.tsx             # Root: Redirect basierend auf Rolle
-```
+- Routing-Schutz via `proxy.ts` (nicht `middleware.ts`) mit `export function proxy()`
+- Tailwind v4: kein `tailwind.config.ts` — Konfiguration via `@theme`-Blöcke in `app/globals.css`
+- `cookies()` aus `next/headers` ist async: `const cookieStore = await cookies()`
 
-`middleware.ts` schützt alle Routen und leitet basierend auf `persons.role` weiter.
+`proxy.ts` schützt alle Routen und leitet basierend auf `persons.role` weiter.
 
 ### Zwei Nutzerrollen
 
@@ -84,8 +79,4 @@ Datenbank verwendet `snake_case`, TypeScript-Typen in `lib/types.ts` verwenden `
 
 ### RLS
 
-Row Level Security ist aktiv. Owner hat vollen Zugriff. Freelancer sieht nur eigene `person`, eigene `bookings` und `events` wo eine bestätigte Buchung vorliegt. Helper-Funktionen `is_owner()` und `my_person_id()` sind als Postgres-Functions definiert.
-
-## Implementierungs-Reihenfolge
-
-Plan 1 (Foundation) → Plan 2 (Template & Event Management) → Plan 3 (Booking Flow + Dashboard) → Plan 4 (Call Sheet + Notifications)
+Row Level Security ist aktiv. Owner hat vollen Zugriff. Freelancer sieht nur eigene `person`, eigene `bookings` und `events` wo eine bestätigte Buchung vorliegt. Postgres-Helper: `is_owner()`, `my_person_id()`.

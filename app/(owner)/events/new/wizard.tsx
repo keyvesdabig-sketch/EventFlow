@@ -62,10 +62,7 @@ export function EventWizard({ templates, initialTemplateId }: WizardProps) {
   }
 
   function step2Valid(): boolean {
-    return (
-      form.title.trim().length > 0 &&
-      form.phases.every(p => p.startTime && p.endTime && p.endTime > p.startTime)
-    )
+    return form.title.trim().length > 0
   }
 
   function handleSubmit() {

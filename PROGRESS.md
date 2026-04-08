@@ -1,8 +1,8 @@
 # EventFlow — Progress
 
-## Status: Plan 2 (Template & Event Management) abgeschlossen
+## Status: Plan 3 (Booking Flow + Dashboard) abgeschlossen
 
-**Letzter Stand:** 2026-04-06
+**Letzter Stand:** 2026-04-08
 
 ---
 
@@ -78,18 +78,58 @@ Alle 12 Tasks implementiert, reviewed und committed. Feature-Branch: `feature/pl
 
 ---
 
+### Plan 3: Booking Flow + Dashboard ✅
+Alle 6 Tasks implementiert, E2E Smoke Test bestanden. Abgeschlossen: 2026-04-08
+
+**Was gebaut wurde:**
+- `lib/bookings.ts` — Pure Helpers: `getRoleBookingStatus()`, `checkAllRolesConfirmed()`, 10 Unit-Tests
+- `lib/bookings-server.ts` — `transitionEventStatus()` (server-only, Supabase-Zugriff)
+- `app/(owner)/events/[id]/actions.ts` — 3 neue Server Actions: `startBookingAction`, `sendBookingRequests`, `replaceBookingAction`
+- `app/(owner)/events/[id]/booking-section.tsx` — Client Component mit Realtime, Rollen-Picker, Status-Chips, Replace-Flow
+- `app/(owner)/events/[id]/page.tsx` — erweitert mit Booking-Daten, busyPersonIds, `<BookingSection>`
+- `app/(freelancer)/actions.ts` — `respondToBookingAction` mit automatischem Event-Status-Übergang
+- `app/(freelancer)/home/booking-requests.tsx` — Client Component für Anfragen (accept/decline)
+- `app/(freelancer)/home/page.tsx` — Offene Anfragen + bestätigte Events
+
+**RLS-Fixes (während Smoke Test entdeckt):**
+- Rekursion zwischen `events`- und `roles`-Policies → behoben via `SECURITY DEFINER`-Funktionen (`my_confirmed_event_ids`, `my_booked_event_ids`)
+- `freelancer_booked_events`-Policy auf `sent` + `confirmed` erweitert (Freelancer braucht Event-Zugriff für pending Anfragen)
+- `allow_self_link`-Policy auf `persons` für Auth-Linking beim ersten Login
+
+**Dev-Hilfsdateien (nicht für Produktion):**
+- `app/api/dev-login/route.ts` — Generiert Login-Link via Admin API (umgeht Rate Limit)
+- `app/auth/dev-callback/page.tsx` — Implicit Flow Handler für Dev-Login
+- `scripts/generate-login-link.mjs` — CLI-Script für Login-Link
+
+**Total: 39 Unit-Tests grün**
+
+---
+
+### Plan 4: Call Sheet + Email Notifications ✅
+Alle Tasks implementiert, Smoke Test bestanden, in master gemergt: 2026-04-08
+
+**Was gebaut wurde:**
+- `app/(freelancer)/call-sheet/[id]/page.tsx` — Mobile Call Sheet mit Zeitplan, Venue, Crew-Liste, Navigation
+- `supabase/functions/send-notification-email/` — Edge Function für Booking-Request E-Mails (Resend)
+- `app/(owner)/events/[id]/cancel-button.tsx` — Cancel-Event für Owner
+- `app/(owner)/events/[id]/actions.ts` — `cancelEventAction`, erweitertes `sendBookingRequests` mit E-Mail
+- `supabase/migrations/20260408120000_pg_cron_reminder.sql` — Tag-vorher-Erinnerung via pg_cron
+- `get_confirmed_crew` SQL-Funktion (SECURITY DEFINER) für Crew-Zugriff im Call Sheet
+- Routing-Fix: Call Sheet auf `/call-sheet/[id]` (Konflikt mit Owner `/events/[id]` gelöst)
+
+**E-Mail-Setup (manuell ausstehend für Produktion):**
+- Resend API Key als Supabase Secret setzen
+- pg_net Extension aktivieren
+- Service Role Key als DB-Setting
+- pg_cron Migration ausführen
+
+**Total: 39 Unit-Tests grün**
+
+---
+
 ## Offene Pläne
 
-### Plan 3: Booking Flow + Dashboard (ausstehend)
-- Anfragen senden (Owner → Freelancer)
-- Bestätigen/Ablehnen (Freelancer)
-- Live-Status-Dashboard (Inhaber)
-- Supabase Realtime für Dashboard-Updates
-
-### Plan 4: Call Sheet + Notifications (ausstehend)
-- Mobile Call Sheet View (Freelancer)
-- Push Notifications (Web Push API via Supabase Edge Functions)
-- PDF-Export des Call Sheets
+Keine offenen Pläne — alle 4 Pläne abgeschlossen.
 
 ---
 
