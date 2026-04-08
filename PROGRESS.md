@@ -1,6 +1,6 @@
 # EventFlow — Progress
 
-## Status: Plan 3 (Booking Flow + Dashboard) abgeschlossen
+## Status: Template Editing abgeschlossen
 
 **Letzter Stand:** 2026-04-08
 
@@ -127,9 +127,24 @@ Alle Tasks implementiert, Smoke Test bestanden, in master gemergt: 2026-04-08
 
 ---
 
+### Template Editing ✅
+Alle 6 Tasks implementiert, reviewed und in master gemergt: 2026-04-08
+
+**Was gebaut wurde:**
+- `app/(owner)/templates/[id]/inline-editor.tsx` — Client Component mit View/Edit-Toggle, Inline-Formular für alle Felder
+- `app/(owner)/templates/[id]/actions.ts` — `updateTemplateAction` mit Validierung und Owner-Auth
+- `app/(owner)/templates/new/page.tsx` — Neue Template-Seite (leer oder als Duplikat via `?from=[id]`)
+- `app/(owner)/templates/new/actions.ts` — `createTemplateAction` mit Redirect zu neuem Template
+- `app/(owner)/templates/[id]/page.tsx` — Auf minimale Server Component reduziert
+- `app/(owner)/templates/page.tsx` — «+ Neues Template»-Button + «Duplizieren»-Link pro Zeile
+
+**Total: 39 Unit-Tests grün**
+
+---
+
 ## Offene Pläne
 
-Keine offenen Pläne — alle 4 Pläne abgeschlossen.
+Keine offenen Pläne.
 
 ---
 
