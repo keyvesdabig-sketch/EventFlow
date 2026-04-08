@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { ProductionChip } from '@/components/ui/production-chip'
 import { updateTemplateAction } from './actions'
@@ -27,6 +28,7 @@ export function TemplateInlineEditor({
   onSave,
   cancelHref,
 }: TemplateInlineEditorProps) {
+  const router = useRouter()
   const [editing, setEditing] = useState(initialEditing)
   const [name, setName] = useState(template.name)
   const [phases, setPhases] = useState<TemplatePhase[]>(template.phases)
@@ -46,7 +48,7 @@ export function TemplateInlineEditor({
   function handleCancel() {
     resetToTemplate()
     if (cancelHref) {
-      window.location.href = cancelHref
+      router.push(cancelHref)
     } else {
       setEditing(false)
     }
@@ -87,8 +89,8 @@ export function TemplateInlineEditor({
         <section className="space-y-3">
           <h2 className="label-control text-muted-foreground">Phasen</h2>
           <div className="space-y-2">
-            {template.phases.map((phase, i) => (
-              <div key={i} className="flex items-center justify-between ghost-border rounded-lg bg-level-1 px-5 py-3">
+            {template.phases.map((phase) => (
+              <div key={phase.name} className="flex items-center justify-between ghost-border rounded-lg bg-level-1 px-5 py-3">
                 <span className="font-medium text-foreground">{phase.name}</span>
                 <span className="data-technical text-sm text-muted-foreground">{phase.defaultDurationHours} h</span>
               </div>
@@ -99,8 +101,8 @@ export function TemplateInlineEditor({
         <section className="space-y-3">
           <h2 className="label-control text-muted-foreground">Rollen</h2>
           <div className="space-y-2">
-            {template.roleTemplates.map((rt, i) => (
-              <div key={i} className="flex items-center justify-between ghost-border rounded-lg bg-level-1 px-5 py-3">
+            {template.roleTemplates.map((rt) => (
+              <div key={rt.title} className="flex items-center justify-between ghost-border rounded-lg bg-level-1 px-5 py-3">
                 <div className="flex items-center gap-3">
                   <ProductionChip label={rt.title} />
                   {rt.count > 1 && (
