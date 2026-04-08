@@ -45,3 +45,9 @@ next-env.d.ts
 
 # superpowers brainstorming sessions
 .superpowers/
+
+# supabase cli temp files
+supabase/.temp/
+
+# playwright test results
+test-results/
