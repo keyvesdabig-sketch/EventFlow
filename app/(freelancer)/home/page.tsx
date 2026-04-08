@@ -88,7 +88,7 @@ export default async function FreelancerHomePage() {
               return (
                 <Link
                   key={booking.id}
-                  href={`/events/${event.id}`}
+                  href={`/call-sheet/${event.id}`}
                   className="ghost-border rounded-lg bg-level-1 px-5 py-4 space-y-1 block hover:bg-level-2 transition-colors"
                 >
                   <p className="font-medium text-foreground">{event.title}</p>
