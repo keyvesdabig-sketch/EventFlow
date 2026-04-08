@@ -49,7 +49,8 @@ export default async function CallSheetPage({
   const { data: crewRows } = await supabase
     .rpc('get_confirmed_crew', { p_event_id: id })
 
-  const crew = crewRows ?? []
+  type CrewMember = { person_id: string; person_name: string; phone: string | null; role_title: string }
+  const crew: CrewMember[] = (crewRows ?? []) as CrewMember[]
 
   const firstPhase = event.phases[0]
 
