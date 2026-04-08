@@ -75,6 +75,8 @@ export async function sendBookingRequests(
 
   if (assignments.length === 0) return { error: 'Keine Zuteilungen vorhanden' }
 
+  const newBookingIds: string[] = []
+
   for (const { roleId, personId } of assignments) {
     // Vorherige offene Bookings für diese Rolle schliessen
     await supabase
@@ -90,11 +92,14 @@ export async function sendBookingRequests(
 
     if (roleError) return { error: roleError.message }
 
-    const { error: bookingError } = await supabase
+    const { data: newBooking, error: bookingError } = await supabase
       .from('bookings')
       .insert({ role_id: roleId, person_id: personId, status: 'sent' })
+      .select('id')
+      .single()
 
     if (bookingError) return { error: bookingError.message }
+    if (newBooking) newBookingIds.push(newBooking.id)
   }
 
   // Event auf 'booking' setzen falls noch 'draft'
@@ -103,6 +108,36 @@ export async function sendBookingRequests(
     .update({ status: 'booking' })
     .eq('id', eventId)
     .eq('status', 'draft')
+
+  // E-Mail-Benachrichtigungen an angefragte Freelancer (fire-and-forget)
+  if (newBookingIds.length > 0) {
+    supabase.functions.invoke('send-notification-email', {
+      body: { type: 'booking_request', bookingIds: newBookingIds },
+    }).catch(console.error)
+  }
+
+  revalidatePath(`/events/${eventId}`)
+}
+
+/**
+ * Setzt Event-Status auf 'cancelled' und benachrichtigt alle bestätigten Freelancer per E-Mail.
+ */
+export async function cancelEventAction(eventId: string): Promise<{ error: string } | void> {
+  const { error, supabase } = await requireOwner()
+  if (error || !supabase) return { error: error ?? 'Fehler' }
+
+  const { error: dbError } = await supabase
+    .from('events')
+    .update({ status: 'cancelled' })
+    .eq('id', eventId)
+    .not('status', 'eq', 'cancelled')
+
+  if (dbError) return { error: dbError.message }
+
+  // E-Mail an bestätigte Crew (fire-and-forget)
+  supabase.functions.invoke('send-notification-email', {
+    body: { type: 'event_cancelled', eventId },
+  }).catch(console.error)
 
   revalidatePath(`/events/${eventId}`)
 }
