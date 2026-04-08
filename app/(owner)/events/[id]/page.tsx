@@ -4,6 +4,7 @@ import { BookingSection } from './booking-section'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { DeleteEventButton } from './delete-button'
+import { CancelEventButton } from './cancel-button'
 import type { EventStatus, ConcretePhase } from '@/lib/types'
 
 function statusLabel(status: EventStatus): string {
@@ -124,6 +125,9 @@ export default async function EventDetailPage({
           >
             {statusLabel(event.status)}
           </span>
+          {event.status !== 'cancelled' && event.status !== 'completed' && (
+            <CancelEventButton eventId={event.id} />
+          )}
           {event.status === 'draft' && <DeleteEventButton eventId={event.id} />}
         </div>
       </div>
