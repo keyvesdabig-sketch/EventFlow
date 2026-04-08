@@ -133,6 +133,12 @@ Keine offenen Pläne — alle 4 Pläne abgeschlossen.
 
 ---
 
+## Deployment
+
+- **Produktion:** https://event-flow-chi.vercel.app
+- **Hosting:** Vercel (Hobby Plan, public repo)
+- **Live seit:** 2026-04-08
+
 ## Supabase
 
 - **Projekt-ID:** `lvdezpdhjnbppphboxyd`
