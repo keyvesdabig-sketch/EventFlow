@@ -15,6 +15,7 @@ describe('validatePersonInput', () => {
   it('gibt Fehler zurück wenn Name nur Leerzeichen', () => {
     const result = validatePersonInput({ name: '   ', email: 'max@example.com' })
     expect(result).not.toBeNull()
+    expect(result?.error).toContain('Name')
   })
 
   it('gibt Fehler zurück wenn E-Mail leer', () => {
@@ -26,9 +27,15 @@ describe('validatePersonInput', () => {
   it('gibt Fehler zurück bei ungültigem E-Mail-Format', () => {
     const result = validatePersonInput({ name: 'Max', email: 'kein-at-zeichen' })
     expect(result).not.toBeNull()
+    expect(result?.error).toContain('E-Mail')
   })
 
   it('akzeptiert .ch Domain', () => {
     expect(validatePersonInput({ name: 'Max', email: 'max@example.ch' })).toBeNull()
+  })
+
+  it('lehnt E-Mail mit führenden/nachfolgenden Leerzeichen ab', () => {
+    const result = validatePersonInput({ name: 'Max', email: ' max@example.com ' })
+    expect(result).not.toBeNull()
   })
 })
