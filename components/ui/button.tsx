@@ -11,7 +11,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "rounded-[0.375rem] bg-gradient-to-b from-level-3 to-level-2 text-foreground ghost-border hover:from-accent hover:to-level-2",
+          "rounded-[0.375rem] bg-foreground text-background font-semibold shadow-lg hover:bg-white hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] transition-all duration-300",
         destructive:
           "rounded-[0.375rem] bg-tally-red text-level-0 hover:bg-tally-red/90",
         outline:

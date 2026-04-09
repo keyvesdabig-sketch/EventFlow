@@ -1,6 +1,6 @@
 # EventFlow — Progress
 
-## Status: Plan 3 (Booking Flow + Dashboard) abgeschlossen
+## Status: Template Editing abgeschlossen
 
 **Letzter Stand:** 2026-04-08
 
@@ -127,9 +127,39 @@ Alle Tasks implementiert, Smoke Test bestanden, in master gemergt: 2026-04-08
 
 ---
 
+### Template Editing ✅
+Alle 6 Tasks implementiert, reviewed und in master gemergt: 2026-04-08
+
+**Was gebaut wurde:**
+- `app/(owner)/templates/[id]/inline-editor.tsx` — Client Component mit View/Edit-Toggle, Inline-Formular für alle Felder
+- `app/(owner)/templates/[id]/actions.ts` — `updateTemplateAction` mit Validierung und Owner-Auth
+- `app/(owner)/templates/new/page.tsx` — Neue Template-Seite (leer oder als Duplikat via `?from=[id]`)
+- `app/(owner)/templates/new/actions.ts` — `createTemplateAction` mit Redirect zu neuem Template
+- `app/(owner)/templates/[id]/page.tsx` — Auf minimale Server Component reduziert
+- `app/(owner)/templates/page.tsx` — «+ Neues Template»-Button + «Duplizieren»-Link pro Zeile
+
+**Total: 39 Unit-Tests grün**
+
+---
+
+### UI/UX Polishing & Workflow Shortcuts ✅
+Abgeschlossen: 2026-04-08
+
+**Was optimiert wurde:**
+- **Global Design:** Kinetisches Hintergrundbild (`BG.mountain.png`) global verankert mit dunklem Gradient-Overlay für beste Lesbarkeit.
+- **TopBar:** "High-Contrast Frosted Glass" Upgrade (`bg-white/5`, extremer Blur, tiefer Shadow). User-Name optisch klar via Divider und Icon abgegrenzt ("Dezent"-Look).
+- **Dashboard:** Lebendiger (pulse) leuchtender Leerzustand (Empty-State) animiert, um den Nutzerfluss zu fördern.
+- **Event Wizard (UX):** Datums-Eingabe massiv entschlackt (Ein globales `eventDate`, flinke native `time`-Eingaben für Phasen). Butterweiche Slide-In Animationen zwischen den Schritten.
+- **Event Wizard (UX):** Premium Shadcn Mini-Kalender als schickes Hover-Menü eingebaut (inkl. Flexbox-Layout Fix).
+- **Event Wizard (Smart):** Automatische Berechnung der `End-Zeit` bei Phaseneingabe, basierend auf den `defaultDurationHours` des gewählten Templates – inklusive nahtlosem Mitternachts-Überlauf.
+- **Event Wizard (Bugfix):** Zuverlässige Weiterleitung (`router.push`) nach erfolgreichem Server-Speichern eingebaut (Freeze beim Klick auf "Senden" behoben).
+- **Event Details:** Komplettes Layout-Upgrade der Event-Ansicht auf exakten "Kinetic Control Room" Look. 2-Spalten CSS Grid für massenhafte Rollen (`lg:grid-cols-2`), durchscheinendes Frosted Glass, und der Zeitplan als interaktive "Mission Control" Vertikal-Timeline mit leuchtenden Nodes.
+
+---
+
 ## Offene Pläne
 
-Keine offenen Pläne — alle 4 Pläne abgeschlossen.
+Keine offenen Pläne.
 
 ---
 

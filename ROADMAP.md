@@ -55,12 +55,13 @@ In der Design-Spec explizit als "spätere Version" vorgesehen.
 - Automatisch beim Event-Confirm
 
 ---
+## Plan 9: Freelancer-seitige Verfügbarkeitskalender
 
 ## Bewusst nicht geplant
 
 Gemäss ursprünglicher Design-Entscheidung ausgeschlossen:
 
-- Freelancer-seitige Verfügbarkeitskalender
+
 - Automatische Eskalation bei Absagen
 - Rechnungs- / Honorarverwaltung
 - Native iOS/Android App (PWA ist ausreichend)

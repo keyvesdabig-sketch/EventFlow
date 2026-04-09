@@ -12,7 +12,7 @@ export async function createEventAction(data: {
   venue: Venue
   notes: string
   roleTemplates: RoleTemplate[]
-}): Promise<{ error: string } | void> {
+}): Promise<{ error?: string, eventId?: string }> {
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -50,5 +50,5 @@ export async function createEventAction(data: {
     if (rolesError) return { error: rolesError.message }
   }
 
-  redirect(`/events/${event.id}`)
+  return { eventId: event.id }
 }
