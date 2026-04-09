@@ -133,34 +133,47 @@ export default async function EventDetailPage({
       </div>
 
       {/* Phases */}
-      <section className="space-y-3">
-        <h2 className="label-control text-muted-foreground">Zeitplan</h2>
-        <div className="space-y-2">
+      <section className="space-y-4">
+        <h2 className="label-control text-muted-foreground/60 tracking-widest pl-1 uppercase">Zeitplan</h2>
+        <div className="flex flex-col">
           {event.phases.map((phase, i) => (
-            <div
-              key={i}
-              className="flex items-center justify-between ghost-border rounded-lg bg-level-1 px-5 py-3"
-            >
-              <span className="font-medium text-foreground">{phase.name}</span>
-              <span className="data-technical text-sm text-muted-foreground">
-                {new Date(phase.startTime).toLocaleString('de-CH', {
-                  day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit',
-                })}
-                {' – '}
-                {new Date(phase.endTime).toLocaleString('de-CH', {
-                  hour: '2-digit', minute: '2-digit',
-                })}
-              </span>
+            <div key={i} className="flex group">
+              {/* Timeline Column */}
+              <div className="flex flex-col items-center w-8 sm:w-12 shrink-0">
+                <div className={`w-px flex-1 ${i === 0 ? 'bg-transparent' : 'bg-white/15'}`} />
+                <div className="w-2.5 h-2.5 rounded-full border-[1.5px] border-white/40 bg-background group-hover:border-white group-hover:shadow-[0_0_12px_rgba(255,255,255,0.7)] group-hover:scale-110 transition-all z-10 my-1.5" />
+                <div className={`w-px flex-1 ${i === event.phases.length - 1 ? 'bg-transparent' : 'bg-white/15'}`} />
+              </div>
+
+              {/* Card Column */}
+              <div className="flex-1 py-2 sm:py-3 min-w-0">
+                <div
+                  className="flex flex-col lg:flex-row lg:items-center justify-between rounded-xl border border-white/5 bg-background/40 backdrop-blur-xl px-4 sm:px-5 py-3.5 shadow-lg relative overflow-hidden group-hover:border-white/10 transition-colors"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                  <span className="font-semibold text-foreground/90 tracking-wide relative z-10 mb-2 lg:mb-0 truncate">{phase.name}</span>
+                  <div className="flex flex-wrap sm:flex-nowrap gap-2 sm:gap-4 items-center text-sm font-medium tracking-wider relative z-10">
+                    <span className="text-muted-foreground/60 whitespace-nowrap">
+                      {new Date(phase.startTime).toLocaleString('de-CH', { weekday: 'short', day: '2-digit', month: '2-digit' })}
+                    </span>
+                    <span className="text-foreground/80 bg-white/5 px-2.5 py-1 rounded-md border border-white/5 whitespace-nowrap">
+                      {new Date(phase.startTime).toLocaleString('de-CH', { hour: '2-digit', minute: '2-digit' })}
+                      <span className="text-muted-foreground/50 mx-1.5">–</span>
+                      {new Date(phase.endTime).toLocaleString('de-CH', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
       {/* Venue */}
-      <section className="space-y-3">
-        <h2 className="label-control text-muted-foreground">Venue</h2>
-        <div className="ghost-border rounded-lg bg-level-1 px-5 py-4 space-y-2">
-          <p className="font-medium text-foreground">{event.venue.name || '—'}</p>
+      <section className="space-y-4">
+        <h2 className="label-control text-muted-foreground/60 tracking-widest pl-1 uppercase">Venue</h2>
+        <div className="rounded-xl border border-white/5 bg-background/40 backdrop-blur-xl px-5 py-4 space-y-2 shadow-lg">
+          <p className="font-semibold text-foreground/90 tracking-wide">{event.venue.name || '—'}</p>
           {event.venue.address && (
             <p className="text-sm text-muted-foreground">{event.venue.address}</p>
           )}
@@ -180,8 +193,8 @@ export default async function EventDetailPage({
       </section>
 
       {/* Rollen + Booking */}
-      <section className="space-y-3">
-        <h2 className="label-control text-muted-foreground">
+      <section className="space-y-4">
+        <h2 className="label-control text-muted-foreground/60 tracking-widest pl-1 uppercase">
           Rollen ({roles.length})
         </h2>
         {roles.length === 0 ? (
@@ -200,9 +213,9 @@ export default async function EventDetailPage({
 
       {/* Notes */}
       {event.notes && (
-        <section className="space-y-3">
-          <h2 className="label-control text-muted-foreground">Notizen</h2>
-          <div className="ghost-border rounded-lg bg-level-1 px-5 py-4 text-sm text-muted-foreground whitespace-pre-wrap">
+        <section className="space-y-4">
+          <h2 className="label-control text-muted-foreground/60 tracking-widest pl-1 uppercase">Notizen</h2>
+          <div className="rounded-xl border border-white/5 bg-background/40 backdrop-blur-xl px-5 py-4 text-sm text-muted-foreground/90 whitespace-pre-wrap shadow-lg">
             {event.notes}
           </div>
         </section>

@@ -142,6 +142,21 @@ Alle 6 Tasks implementiert, reviewed und in master gemergt: 2026-04-08
 
 ---
 
+### UI/UX Polishing & Workflow Shortcuts ✅
+Abgeschlossen: 2026-04-08
+
+**Was optimiert wurde:**
+- **Global Design:** Kinetisches Hintergrundbild (`BG.mountain.png`) global verankert mit dunklem Gradient-Overlay für beste Lesbarkeit.
+- **TopBar:** "High-Contrast Frosted Glass" Upgrade (`bg-white/5`, extremer Blur, tiefer Shadow). User-Name optisch klar via Divider und Icon abgegrenzt ("Dezent"-Look).
+- **Dashboard:** Lebendiger (pulse) leuchtender Leerzustand (Empty-State) animiert, um den Nutzerfluss zu fördern.
+- **Event Wizard (UX):** Datums-Eingabe massiv entschlackt (Ein globales `eventDate`, flinke native `time`-Eingaben für Phasen). Butterweiche Slide-In Animationen zwischen den Schritten.
+- **Event Wizard (UX):** Premium Shadcn Mini-Kalender als schickes Hover-Menü eingebaut (inkl. Flexbox-Layout Fix).
+- **Event Wizard (Smart):** Automatische Berechnung der `End-Zeit` bei Phaseneingabe, basierend auf den `defaultDurationHours` des gewählten Templates – inklusive nahtlosem Mitternachts-Überlauf.
+- **Event Wizard (Bugfix):** Zuverlässige Weiterleitung (`router.push`) nach erfolgreichem Server-Speichern eingebaut (Freeze beim Klick auf "Senden" behoben).
+- **Event Details:** Komplettes Layout-Upgrade der Event-Ansicht auf exakten "Kinetic Control Room" Look. 2-Spalten CSS Grid für massenhafte Rollen (`lg:grid-cols-2`), durchscheinendes Frosted Glass, und der Zeitplan als interaktive "Mission Control" Vertikal-Timeline mit leuchtenden Nodes.
+
+---
+
 ## Offene Pläne
 
 Keine offenen Pläne.

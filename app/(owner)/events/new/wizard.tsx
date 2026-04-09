@@ -1,8 +1,13 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { CalendarIcon } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Calendar } from '@/components/ui/calendar'
+import { cn } from '@/lib/utils'
 import { createEventAction } from './actions'
 import type { ProductionTemplate, ConcretePhase, Venue } from '@/lib/types'
 
@@ -16,6 +21,7 @@ type Step = 1 | 2 | 3
 interface FormState {
   selectedTemplate: ProductionTemplate | null
   title: string
+  eventDate: string
   phases: ConcretePhase[]
   venue: Venue
   notes: string
@@ -26,6 +32,7 @@ const emptyVenue: Venue = {
 }
 
 export function EventWizard({ templates, initialTemplateId }: WizardProps) {
+  const router = useRouter()
   const initialTemplate = initialTemplateId
     ? (templates.find(t => t.id === initialTemplateId) ?? null)
     : null
@@ -37,6 +44,7 @@ export function EventWizard({ templates, initialTemplateId }: WizardProps) {
   const [form, setForm] = useState<FormState>({
     selectedTemplate: initialTemplate,
     title: initialTemplate?.name ?? '',
+    eventDate: new Date().toISOString().split('T')[0],
     phases: initialTemplate?.phases.map(p => ({ name: p.name, startTime: '', endTime: '' })) ?? [],
     venue: emptyVenue,
     notes: '',
@@ -46,6 +54,7 @@ export function EventWizard({ templates, initialTemplateId }: WizardProps) {
     setForm({
       selectedTemplate: template,
       title: template.name,
+      eventDate: form.eventDate || new Date().toISOString().split('T')[0],
       phases: template.phases.map(p => ({ name: p.name, startTime: '', endTime: '' })),
       venue: emptyVenue,
       notes: '',
@@ -56,29 +65,96 @@ export function EventWizard({ templates, initialTemplateId }: WizardProps) {
   function updatePhase(index: number, field: 'startTime' | 'endTime', value: string) {
     setForm(f => {
       const phases = [...f.phases]
-      phases[index] = { ...phases[index], [field]: value }
+      const updatedPhase = { ...phases[index], [field]: value }
+
+      if (field === 'startTime' && value && f.selectedTemplate) {
+        const durationHours = f.selectedTemplate.phases[index]?.defaultDurationHours || 0
+        if (durationHours > 0) {
+          const [h, m] = value.split(':').map(Number)
+          const totalMinutes = h * 60 + m + Math.round(durationHours * 60)
+          const endH = Math.floor(totalMinutes / 60) % 24
+          const endM = totalMinutes % 60
+          updatedPhase.endTime = `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`
+        }
+      }
+
+      phases[index] = updatedPhase
       return { ...f, phases }
     })
   }
 
   function step2Valid(): boolean {
-    return form.title.trim().length > 0
+    return form.title.trim().length > 0 && form.eventDate !== ''
+  }
+
+  function combineDateTime(baseDate: string, timeStr: string, addDays = 0) {
+    if (!baseDate || !timeStr) return ''
+    const d = new Date(baseDate)
+    d.setDate(d.getDate() + addDays)
+    const yyyy = d.getFullYear()
+    const mm = String(d.getMonth() + 1).padStart(2, '0')
+    const dd = String(d.getDate()).padStart(2, '0')
+    // timeStr is HH:mm
+    return `${yyyy}-${mm}-${dd}T${timeStr}`
   }
 
   function handleSubmit() {
     if (!form.selectedTemplate) return
     setServerError(null)
+    
+    let currentAddDays = 0
+    let lastTimeMinutes = -1
+
+    function timeToMinutes(t: string) {
+      if (!t) return 0
+      const [h, m] = t.split(':').map(Number)
+      return h * 60 + m
+    }
+
+    const processedPhases = form.phases.map(p => {
+      let combinedStart = ''
+      let combinedEnd = ''
+      
+      if (p.startTime) {
+        const startMin = timeToMinutes(p.startTime)
+        if (lastTimeMinutes !== -1 && startMin < lastTimeMinutes - 60) {
+           // Only cross day if it jumps back significantly (>1hr) to avoid timezone flip weirdness, 
+           // though direct comparison is usually fine.
+           currentAddDays++
+        }
+        combinedStart = combineDateTime(form.eventDate, p.startTime, currentAddDays)
+        lastTimeMinutes = startMin
+      }
+
+      if (p.endTime) {
+        const endMin = timeToMinutes(p.endTime)
+        if (endMin < lastTimeMinutes) {
+           currentAddDays++
+        }
+        combinedEnd = combineDateTime(form.eventDate, p.endTime, currentAddDays)
+        lastTimeMinutes = endMin
+      }
+
+      return {
+        name: p.name,
+        startTime: combinedStart,
+        endTime: combinedEnd
+      }
+    })
+
     startTransition(async () => {
       const result = await createEventAction({
         templateId: form.selectedTemplate!.id,
         title: form.title,
-        phases: form.phases,
+        phases: processedPhases,
         venue: form.venue,
         notes: form.notes,
         roleTemplates: form.selectedTemplate!.roleTemplates,
       })
-      if (result && 'error' in result) {
+      if (result && result.error) {
         setServerError(result.error)
+      } else if (result && result.eventId) {
+        router.push(`/events/${result.eventId}`)
       }
     })
   }
@@ -99,7 +175,7 @@ export function EventWizard({ templates, initialTemplateId }: WizardProps) {
 
       {/* Step 1: Template selection */}
       {step === 1 && (
-        <div className="space-y-4">
+        <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-500">
           <div>
             <p className="label-control text-muted-foreground mb-1">Schritt 1 / 3</p>
             <h2 className="text-xl font-bold text-foreground">Template wählen</h2>
@@ -127,19 +203,57 @@ export function EventWizard({ templates, initialTemplateId }: WizardProps) {
 
       {/* Step 2: Title + phases */}
       {step === 2 && (
-        <div className="space-y-6">
+        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
           <div>
             <p className="label-control text-muted-foreground mb-1">Schritt 2 / 3</p>
             <h2 className="text-xl font-bold text-foreground">Datum &amp; Zeiten</h2>
           </div>
 
-          <div className="space-y-2">
-            <label className="label-control text-muted-foreground text-xs">Event-Titel</label>
-            <Input
-              value={form.title}
-              onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-              placeholder="z. B. EHC Chur vs. HC Davos"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="label-control text-muted-foreground text-xs">Event-Titel</label>
+              <Input
+                value={form.title}
+                onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
+                placeholder="z. B. EHC Chur vs. HC Davos"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="label-control text-muted-foreground text-xs">Event-Datum</label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal border-border/50 bg-background/50",
+                      !form.eventDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {form.eventDate ? (
+                      new Date(form.eventDate).toLocaleDateString('de-CH', { weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' })
+                    ) : (
+                      <span>Datum wählen</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[310px] p-0 border border-white/5 bg-level-2/95 backdrop-blur-xl shadow-2xl rounded-xl" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={form.eventDate ? new Date(form.eventDate) : undefined}
+                    onSelect={(date) => {
+                      if (date) {
+                        const yyyy = date.getFullYear()
+                        const mm = String(date.getMonth() + 1).padStart(2, '0')
+                        const dd = String(date.getDate()).padStart(2, '0')
+                        setForm(f => ({ ...f, eventDate: `${yyyy}-${mm}-${dd}` }))
+                      }
+                    }}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -148,25 +262,22 @@ export function EventWizard({ templates, initialTemplateId }: WizardProps) {
                 <p className="label-control text-foreground text-xs">{phase.name}</p>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="label-control text-muted-foreground text-xs">Start</label>
+                    <label className="label-control text-muted-foreground text-xs">Start-Zeit</label>
                     <Input
-                      type="datetime-local"
-                      value={phase.startTime}
+                      type="time"
+                      value={form.phases[i].startTime}
                       onChange={e => updatePhase(i, 'startTime', e.target.value)}
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="label-control text-muted-foreground text-xs">Ende</label>
+                    <label className="label-control text-muted-foreground text-xs">End-Zeit</label>
                     <Input
-                      type="datetime-local"
-                      value={phase.endTime}
+                      type="time"
+                      value={form.phases[i].endTime}
                       onChange={e => updatePhase(i, 'endTime', e.target.value)}
                     />
                   </div>
                 </div>
-                {phase.startTime && phase.endTime && phase.endTime <= phase.startTime && (
-                  <p className="text-xs text-tally-red">Ende muss nach Start liegen.</p>
-                )}
               </div>
             ))}
           </div>
@@ -184,7 +295,7 @@ export function EventWizard({ templates, initialTemplateId }: WizardProps) {
 
       {/* Step 3: Venue + notes */}
       {step === 3 && (
-        <div className="space-y-6">
+        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
           <div>
             <p className="label-control text-muted-foreground mb-1">Schritt 3 / 3</p>
             <h2 className="text-xl font-bold text-foreground">Venue &amp; Notizen</h2>
@@ -231,7 +342,7 @@ export function EventWizard({ templates, initialTemplateId }: WizardProps) {
               value={form.notes}
               onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
               placeholder="Besonderheiten, Hinweise..."
-              className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
+              className="flex min-h-[80px] w-full rounded-md border border-white/10 bg-background/20 backdrop-blur-md px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:border-white/30 focus-visible:shadow-[0_0_15px_rgba(255,255,255,0.05)] transition-all duration-300 resize-none"
             />
           </div>
 

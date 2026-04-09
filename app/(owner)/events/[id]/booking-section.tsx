@@ -153,10 +153,11 @@ export function BookingSection({
   if (!hasAnyBookings) {
     const assignmentCount = Object.keys(assignments).length
     return (
-      <div className="space-y-3">
+      <div className="space-y-4">
         {serverError && (
           <p className="text-sm text-tally-red">{serverError}</p>
         )}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {roles.map(role => {
           const preferred = getPreferredPersons(role)
           const selected = assignments[role.id]
@@ -164,7 +165,7 @@ export function BookingSection({
           const filteredPersons = getFilteredPersons()
 
           return (
-            <div key={role.id} className="ghost-border rounded-lg bg-level-1 px-5 py-4 space-y-3">
+            <div key={role.id} className="rounded-xl border border-white/5 bg-background/40 backdrop-blur-xl px-5 py-4 space-y-3 shadow-lg hover:border-white/10 transition-colors">
               <div className="flex items-center justify-between">
                 <ProductionChip label={role.title} />
                 {selected && (
@@ -261,11 +262,12 @@ export function BookingSection({
             </div>
           )
         })}
+        </div>
 
         <Button
           onClick={handleSendRequests}
           disabled={isPending || assignmentCount === 0}
-          className="w-full mt-2"
+          className="w-full mt-4"
         >
           {isPending
             ? 'Wird gesendet…'
@@ -279,17 +281,18 @@ export function BookingSection({
 
   // ─── Status-Modus: Live-Status nach dem Senden ───────────────────────────────
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       {serverError && (
         <p className="text-sm text-tally-red">{serverError}</p>
       )}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {roles.map(role => {
         const status = getRoleBookingStatus(bookings, role.id)
         const assignedPerson = persons.find(p => p.id === role.assignedPersonId)
         const isReplacing = replaceRoleId === role.id
 
         return (
-          <div key={role.id} className="ghost-border rounded-lg bg-level-1 px-5 py-3 space-y-3">
+          <div key={role.id} className="rounded-xl border border-white/5 bg-background/40 backdrop-blur-xl px-5 py-4 space-y-3 shadow-lg hover:border-white/10 transition-colors">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <ProductionChip label={role.title} />
@@ -323,6 +326,7 @@ export function BookingSection({
           </div>
         )
       })}
+      </div>
     </div>
   )
 }

@@ -91,6 +91,10 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-manrope), sans-serif;
+    background-image: linear-gradient(rgba(14, 14, 19, 0.85), rgba(14, 14, 19, 0.85)), url('/BG.mountain.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-space-grotesk), sans-serif;

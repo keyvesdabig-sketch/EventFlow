@@ -66,8 +66,9 @@ export default async function DashboardPage() {
       </div>
 
       {events.length === 0 ? (
-        <div className="ghost-border rounded-lg bg-level-2 p-12 text-center text-muted-foreground text-sm">
-          Noch keine Events. Erstelle ein Event aus einem Template.
+        <div className="border border-white/5 rounded-xl bg-background/30 backdrop-blur-md p-12 text-center shadow-inner animate-[pulse_4s_cubic-bezier(0.4,0,0.6,1)_infinite] hover:animate-none transition-all duration-500">
+          <p className="text-muted-foreground text-sm font-medium">Noch keine Events.</p>
+          <p className="text-muted-foreground/60 text-xs mt-1">Erstelle ein Event aus einem Template.</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -75,7 +76,7 @@ export default async function DashboardPage() {
             <Link
               key={event.id}
               href={`/events/${event.id}`}
-              className="flex items-center justify-between ghost-border rounded-lg bg-level-1 px-5 py-4 hover:bg-level-2 transition-colors group"
+              className="flex items-center justify-between border border-white/5 rounded-xl bg-background/40 backdrop-blur-md px-5 py-4 hover:bg-background/60 hover:shadow-lg transition-all duration-300 group shadow-sm"
             >
               <div className="space-y-0.5">
                 <p className="font-medium text-foreground group-hover:text-foreground">

@@ -21,7 +21,7 @@ export default async function FreelancerLayout({
   if (person?.role !== 'freelancer') redirect('/dashboard')
 
   return (
-    <div className="min-h-screen bg-background max-w-lg mx-auto">
+    <div className="min-h-screen max-w-lg mx-auto">
       <TopBar userName={person?.name} />
       <main className="px-4 py-6 pb-24">
         {children}

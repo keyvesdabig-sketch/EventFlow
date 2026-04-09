@@ -1,6 +1,7 @@
 'use client'
 
 import { Suspense, useState } from 'react'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -43,14 +44,17 @@ function LoginForm() {
     <div className="w-full max-w-sm space-y-8">
       <div className="space-y-1 -ml-1">
         <p className="label-control text-muted-foreground">EHC Chur Productions</p>
-        <h1
-          className="text-5xl font-bold text-foreground"
-          style={{ letterSpacing: '-0.02em', fontFamily: 'var(--font-space-grotesk)' }}
-        >
-          Event
-          <br />
-          <span className="text-tally-red">Flow</span>
-        </h1>
+        <div className="flex items-center gap-4">
+          <Image src="/Logo.png" alt="EventFlow Logo" width={64} height={64} className="object-contain" />
+          <h1
+            className="text-5xl font-bold text-foreground"
+            style={{ letterSpacing: '-0.02em', fontFamily: 'var(--font-space-grotesk)' }}
+          >
+            Event
+            <br />
+            <span className="text-tally-red">Flow</span>
+          </h1>
+        </div>
       </div>
 
       {error === 'no_profile' && (
@@ -93,9 +97,12 @@ export default function LoginPage() {
       <div className="w-full max-w-sm space-y-8">
         <div className="space-y-1 -ml-1">
           <p className="label-control text-muted-foreground">EHC Chur Productions</p>
-          <h1 className="text-5xl font-bold text-foreground" style={{ letterSpacing: '-0.02em', fontFamily: 'var(--font-space-grotesk)' }}>
-            Event<br /><span className="text-tally-red">Flow</span>
-          </h1>
+          <div className="flex items-center gap-4">
+            <Image src="/Logo.png" alt="EventFlow Logo" width={64} height={64} className="object-contain" />
+            <h1 className="text-5xl font-bold text-foreground" style={{ letterSpacing: '-0.02em', fontFamily: 'var(--font-space-grotesk)' }}>
+              Event<br /><span className="text-tally-red">Flow</span>
+            </h1>
+          </div>
         </div>
       </div>
     }>
