@@ -117,11 +117,12 @@ Alle Tasks implementiert, Smoke Test bestanden, in master gemergt: 2026-04-08
 - `get_confirmed_crew` SQL-Funktion (SECURITY DEFINER) für Crew-Zugriff im Call Sheet
 - Routing-Fix: Call Sheet auf `/call-sheet/[id]` (Konflikt mit Owner `/events/[id]` gelöst)
 
-**E-Mail-Setup (manuell ausstehend für Produktion):**
-- Resend API Key als Supabase Secret setzen
-- pg_net Extension aktivieren
-- Service Role Key als DB-Setting
-- pg_cron Migration ausführen
+**E-Mail-Setup (abgeschlossen 2026-04-09):**
+- Resend API Key als Supabase Secret gesetzt
+- pg_net Extension aktiviert
+- pg_cron Extension aktiviert
+- pg_cron Reminder-Job eingerichtet (täglich 16:00 UTC = 18:00 MESZ)
+- `NOTIFICATION_FROM_EMAIL` und `NEXT_PUBLIC_SITE_URL` als Secrets gesetzt
 
 **Total: 39 Unit-Tests grün**
 
@@ -157,9 +158,12 @@ Abgeschlossen: 2026-04-08
 
 ---
 
-## Offene Pläne
+## Offene Aufgaben
 
-Keine offenen Pläne.
+### 🔴 Vor dem ersten echten Event
+- **People-Verwaltung** (`/people`) — Echte E-Mails + Namen einpflegen (aktuell nur Dummy-Daten)
+- **P1-Bug fixen** — Wizard verschiebt überlappende Phasen auf falschen Tag (`wizard.tsx:120-131`)
+- **End-to-End Smoke Test** — Booking-Zyklus mit echtem Freelancer durchspielen
 
 ---
 
