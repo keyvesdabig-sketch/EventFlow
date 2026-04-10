@@ -1,8 +1,8 @@
 # EventFlow — Progress
 
-## Status: Template Editing abgeschlossen
+## Status: E2E Smoke Test grün — bereit für erstes echtes Event
 
-**Letzter Stand:** 2026-04-08
+**Letzter Stand:** 2026-04-10
 
 ---
 
@@ -177,12 +177,22 @@ Abgeschlossen: 2026-04-10 — PR #3 (`feat/people-management`), in review
 
 ---
 
+### E2E Smoke Test + P1 Wizard-Bugfix ✅
+Abgeschlossen: 2026-04-10 — in master gemergt
+
+**Was gebaut wurde:**
+- `app/api/e2e-login/route.ts` — Dev-only Endpoint: generiert Magic Link, ruft action_link direkt via GET ab (redirect:manual), extrahiert Tokens aus Location-Hash-Fragment (umgeht OTP-Verify Endpoint der nur raw OTP akzeptiert)
+- `app/auth/e2e-callback/page.tsx` — Client-Seite empfängt Tokens als Query-Params (nicht Hash) damit Playwright navigieren kann
+- `app/auth/dev-callback/actions.ts` — Shared Server Action für persons-Row-Linking via Admin Client (umgeht RLS SELECT-Beschränkung)
+- `supabase/migrations/20260410000000_allow_self_link_select.sql` — RLS Policy für unverknüpfte User
+- `tests/e2e/booking-cycle.spec.ts` — Vollständiger Booking-Zyklus Smoke Test (Owner → Event → Booking → Freelancer zusagt → Status Zugesagt)
+- Wizard P1-Bug gefixt: Mitternacht-Rollover-Erkennung via `startMin < 6*60 && lastTimeMinutes > 18*60` statt arbiträrer 60min-Schwelle
+
+---
+
 ## Offene Aufgaben
 
-### 🔴 Vor dem ersten echten Event
-- **PR #3 mergen** — People Management Review abgeschlossen, bereit zum Merge
-- **P1-Bug fixen** — Wizard verschiebt überlappende Phasen auf falschen Tag (`wizard.tsx:120-131`)
-- **End-to-End Smoke Test** — Booking-Zyklus mit echtem Freelancer durchspielen
+*(keine bekannten kritischen Issues — bereit für erstes echtes Event)*
 
 ---
 
