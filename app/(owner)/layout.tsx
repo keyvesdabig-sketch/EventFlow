@@ -35,6 +35,12 @@ export default async function OwnerLayout({
       >
         Templates
       </Link>
+      <Link
+        href="/people"
+        className="label-control text-muted-foreground hover:text-foreground transition-colors"
+      >
+        People
+      </Link>
     </nav>
   )
 
