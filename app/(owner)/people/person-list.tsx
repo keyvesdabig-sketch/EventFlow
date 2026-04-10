@@ -29,6 +29,7 @@ export function PersonList({ persons }: { persons: Person[] }) {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [showInviteForm, setShowInviteForm] = useState(false)
   const [inviteLink, setInviteLink] = useState<string | null>(null)
+  const [inviteEmailWarning, setInviteEmailWarning] = useState<string | null>(null)
 
   function toggleExpand(id: string) {
     setExpandedId(prev => (prev === id ? null : id))
@@ -66,8 +67,9 @@ export function PersonList({ persons }: { persons: Person[] }) {
       ) : (
         <InviteForm
           onCancel={() => setShowInviteForm(false)}
-          onCreated={(link) => {
+          onCreated={(link, emailWarning) => {
             setInviteLink(link)
+            setInviteEmailWarning(emailWarning ?? null)
             setShowInviteForm(false)
             router.refresh()
           }}
@@ -77,10 +79,14 @@ export function PersonList({ persons }: { persons: Person[] }) {
       {inviteLink && (
         <div className="rounded-xl border border-signal-green/30 bg-signal-green/5 px-5 py-4 space-y-2">
           <p className="text-sm font-semibold text-signal-green">Login-Link generiert</p>
-          <p className="text-xs text-muted-foreground">
-            Per WhatsApp oder E-Mail weiterleiten. Gültig 1 Stunde.
-            Der Link wurde auch an deine E-Mail gesendet.
-          </p>
+          {inviteEmailWarning ? (
+            <p className="text-xs text-tally-red">{inviteEmailWarning}</p>
+          ) : (
+            <p className="text-xs text-muted-foreground">
+              Per WhatsApp oder E-Mail weiterleiten. Gültig 1 Stunde.
+              Der Link wurde auch an deine E-Mail gesendet.
+            </p>
+          )}
           <div className="flex items-start gap-2">
             <code className="text-xs text-foreground bg-level-2 rounded px-2 py-1 break-all flex-1">
               {inviteLink}
@@ -295,7 +301,7 @@ function InviteForm({
   onCreated,
 }: {
   onCancel: () => void
-  onCreated: (link: string) => void
+  onCreated: (link: string, emailWarning?: string) => void
 }) {
   const [isPending, startTransition] = useTransition()
   const [localError, setLocalError] = useState<string | null>(null)
@@ -317,12 +323,13 @@ function InviteForm({
       if ('error' in createResult) { setLocalError(createResult.error); return }
 
       const linkResult = await generateAndSendInviteLinkAction(email)
-      if ('error' in linkResult) { setLocalError(linkResult.error); return }
-
-      if (linkResult.emailWarning) {
-        setLocalError(linkResult.emailWarning)
+      if ('error' in linkResult) {
+        await deletePersonAction(createResult.id)
+        setLocalError(linkResult.error)
+        return
       }
-      onCreated(linkResult.link)
+
+      onCreated(linkResult.link, linkResult.emailWarning)
     })
   }
 
