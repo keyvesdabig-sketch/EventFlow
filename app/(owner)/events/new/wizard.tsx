@@ -117,10 +117,9 @@ export function EventWizard({ templates, initialTemplateId }: WizardProps) {
       
       if (p.startTime) {
         const startMin = timeToMinutes(p.startTime)
-        if (lastTimeMinutes !== -1 && startMin < lastTimeMinutes - 60) {
-           // Only cross day if it jumps back significantly (>1hr) to avoid timezone flip weirdness, 
-           // though direct comparison is usually fine.
-           currentAddDays++
+        // Midnight rollover: new start is in early hours (<06:00) after a late time (>18:00)
+        if (lastTimeMinutes !== -1 && startMin < 6 * 60 && lastTimeMinutes > 18 * 60) {
+          currentAddDays++
         }
         combinedStart = combineDateTime(form.eventDate, p.startTime, currentAddDays)
         lastTimeMinutes = startMin
@@ -128,8 +127,9 @@ export function EventWizard({ templates, initialTemplateId }: WizardProps) {
 
       if (p.endTime) {
         const endMin = timeToMinutes(p.endTime)
-        if (endMin < lastTimeMinutes) {
-           currentAddDays++
+        // Midnight rollover: end is in early hours (<06:00) after a late start (>18:00)
+        if (endMin < 6 * 60 && lastTimeMinutes > 18 * 60) {
+          currentAddDays++
         }
         combinedEnd = combineDateTime(form.eventDate, p.endTime, currentAddDays)
         lastTimeMinutes = endMin
