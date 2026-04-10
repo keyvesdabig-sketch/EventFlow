@@ -158,10 +158,29 @@ Abgeschlossen: 2026-04-08
 
 ---
 
+### People Management (`/people`) ✅
+Abgeschlossen: 2026-04-10 — PR #3 (`feat/people-management`), in review
+
+**Was gebaut wurde:**
+- `lib/people.ts` — `validatePersonInput()` Helper, 7 Unit-Tests
+- `app/(owner)/people/actions.ts` — 4 Server Actions: `updatePersonAction`, `deletePersonAction`, `createPersonAction`, `generateAndSendInviteLinkAction`
+  - Magic Link via Supabase Admin API, E-Mail-Versand via Resend an Owner
+  - `emailWarning` unterscheidet E-Mail-Fehler (non-blocking) von Link-Fehler (blocking)
+- `app/(owner)/people/page.tsx` — Server Component, filtert Freelancer, ordnet by name
+- `app/(owner)/people/person-list.tsx` — Client Component: expandierende Rows, Invite-Form, Link-Panel
+- Nav-Link «People» in `app/(owner)/layout.tsx` ergänzt
+- **Bugfixes (code review):**
+  - Orphaned-Row-Rollback: `deletePersonAction` bei Link-Generierungs-Fehler
+  - `emailWarning` via `onCreated`-Callback nach oben gereicht (überlebt Unmount)
+
+**Total: 39 Unit-Tests grün**
+
+---
+
 ## Offene Aufgaben
 
 ### 🔴 Vor dem ersten echten Event
-- **People-Verwaltung** (`/people`) — Echte E-Mails + Namen einpflegen (aktuell nur Dummy-Daten)
+- **PR #3 mergen** — People Management Review abgeschlossen, bereit zum Merge
 - **P1-Bug fixen** — Wizard verschiebt überlappende Phasen auf falschen Tag (`wizard.tsx:120-131`)
 - **End-to-End Smoke Test** — Booking-Zyklus mit echtem Freelancer durchspielen
 
