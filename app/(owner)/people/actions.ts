@@ -111,16 +111,14 @@ export async function generateAndSendInviteLinkAction(
 
   const link = data.properties.action_link
 
-  // Owner-E-Mail holen und Link per Resend zusenden
-  const { data: ownerRow } = await supabase
-    .from('persons')
-    .select('email')
-    .eq('role', 'owner')
-    .single()
+  // Aktuellen (eingeloggten) User für den Link-Versand verwenden.
+  // Bewusst KEIN .single() auf persons – es kann mehrere Owner geben (z.B. Dev + echter Owner).
+  const { data: { user: currentUser } } = await supabase.auth.getUser()
+  const ownerEmail = currentUser?.email
 
   let emailWarning: string | undefined
 
-  if (ownerRow?.email) {
+  if (ownerEmail) {
     const from = process.env.NOTIFICATION_FROM_EMAIL ?? 'EventFlow <noreply@example.com>'
     try {
       const res = await fetch('https://api.resend.com/emails', {
@@ -131,7 +129,7 @@ export async function generateAndSendInviteLinkAction(
         },
         body: JSON.stringify({
           from,
-          to: [ownerRow.email],
+          to: [ownerEmail],
           subject: `Login-Link für ${email}`,
           html: `
             <p>Du hast ein neues Crew-Mitglied eingeladen.</p>

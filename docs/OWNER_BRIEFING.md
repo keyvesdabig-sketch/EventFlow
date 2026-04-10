@@ -1,6 +1,6 @@
 # EventFlow — Owner Briefing
 
-Dieses Dokument ist für dich als Inhaber (Owner) der App bestimmt.  
+Hallo Dani — dieses Dokument ist für dich als Inhaber (Owner) der App bestimmt.  
 Es erklärt wie du EventFlow im Alltag nutzt — die technische Seite läuft im Hintergrund und wird vom Entwickler betreut.
 
 ---
@@ -21,6 +21,7 @@ EventFlow ist dein internes Personal-Planungstool für Sport-Streaming-Produktio
 | Was | Wo |
 |---|---|
 | App | https://event-flow-chi.vercel.app |
+| Deine E-Mail | info@nativecrew.ch |
 | Login | Du gibst deine E-Mail ein → du erhältst einen Einmal-Link per E-Mail → klicken → eingeloggt |
 
 Kein Passwort nötig. Der Link ist 1 Stunde gültig.
@@ -84,6 +85,6 @@ Bei Fragen, Problemen oder gewünschten Anpassungen einfach melden.
 
 ## Was du einmalig tun musst
 
-1. **Deinen Account aktivieren** — deine echte E-Mail-Adresse dem Entwickler mitteilen, damit er deinen Eintrag in der App anpasst
-2. **Freelancer erfassen** — unter «People» deine 15–20 Techniker mit Namen, E-Mail und Funktion eintragen
+1. ✅ **Account aktiviert** — `info@nativecrew.ch` ist als Owner eingerichtet. Beim ersten Login auf die App verknüpft sich dein Account automatisch.
+2. **Freelancer erfassen** — unter **«People»** deine Techniker mit Namen, E-Mail und Funktion eintragen
 3. **Templates prüfen** — das bestehende NL2-Template kontrollieren und bei Bedarf anpassen
