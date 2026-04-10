@@ -319,6 +319,9 @@ function InviteForm({
       const linkResult = await generateAndSendInviteLinkAction(email)
       if ('error' in linkResult) { setLocalError(linkResult.error); return }
 
+      if (linkResult.emailWarning) {
+        setLocalError(linkResult.emailWarning)
+      }
       onCreated(linkResult.link)
     })
   }

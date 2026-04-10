@@ -88,7 +88,7 @@ export async function createPersonAction(data: {
 
 export async function generateAndSendInviteLinkAction(
   email: string,
-): Promise<{ error: string } | { link: string }> {
+): Promise<{ error: string } | { link: string; emailWarning?: string }> {
   const { error: ownerCheckError, supabase } = await requireOwner()
   if (ownerCheckError || !supabase) return { error: ownerCheckError ?? 'Fehler' }
 
@@ -118,29 +118,37 @@ export async function generateAndSendInviteLinkAction(
     .eq('role', 'owner')
     .single()
 
+  let emailWarning: string | undefined
+
   if (ownerRow?.email) {
     const from = process.env.NOTIFICATION_FROM_EMAIL ?? 'EventFlow <noreply@example.com>'
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from,
-        to: [ownerRow.email],
-        subject: `Login-Link für ${email}`,
-        html: `
-          <p>Du hast ein neues Crew-Mitglied eingeladen.</p>
-          <p><strong>E-Mail:</strong> ${email}</p>
-          <p>Login-Link (gültig 1 Stunde):</p>
-          <p><a href="${link}">${link}</a></p>
-          <p>Leite diesen Link an das neue Crew-Mitglied weiter.</p>
-        `,
-      }),
-    })
-    if (!res.ok) return { error: `E-Mail konnte nicht gesendet werden (${res.status})` }
+    try {
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${process.env.RESEND_API_KEY ?? ''}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from,
+          to: [ownerRow.email],
+          subject: `Login-Link für ${email}`,
+          html: `
+            <p>Du hast ein neues Crew-Mitglied eingeladen.</p>
+            <p><strong>E-Mail:</strong> ${email}</p>
+            <p>Login-Link (gültig 1 Stunde):</p>
+            <p><a href="${link}">${link}</a></p>
+            <p>Leite diesen Link an das neue Crew-Mitglied weiter.</p>
+          `,
+        }),
+      })
+      if (!res.ok) {
+        emailWarning = `Link generiert, aber E-Mail konnte nicht gesendet werden (${res.status})`
+      }
+    } catch {
+      emailWarning = 'Link generiert, aber E-Mail-Versand fehlgeschlagen'
+    }
   }
 
-  return { link }
+  return { link, emailWarning }
 }
