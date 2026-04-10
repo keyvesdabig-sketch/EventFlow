@@ -29,7 +29,6 @@ export function PersonList({ persons }: { persons: Person[] }) {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [showInviteForm, setShowInviteForm] = useState(false)
   const [inviteLink, setInviteLink] = useState<string | null>(null)
-  const [serverError, setServerError] = useState<string | null>(null)
 
   function toggleExpand(id: string) {
     setExpandedId(prev => (prev === id ? null : id))
@@ -42,8 +41,6 @@ export function PersonList({ persons }: { persons: Person[] }) {
 
   return (
     <div className="space-y-3">
-      {serverError && <p className="text-sm text-tally-red">{serverError}</p>}
-
       {persons.map(person => (
         <PersonRow
           key={person.id}
@@ -51,7 +48,6 @@ export function PersonList({ persons }: { persons: Person[] }) {
           isExpanded={expandedId === person.id}
           onToggle={() => toggleExpand(person.id)}
           onSaved={handleSaved}
-          setServerError={setServerError}
         />
       ))}
 
@@ -75,7 +71,6 @@ export function PersonList({ persons }: { persons: Person[] }) {
             setShowInviteForm(false)
             router.refresh()
           }}
-          setServerError={setServerError}
         />
       )}
 
@@ -109,16 +104,15 @@ function PersonRow({
   isExpanded,
   onToggle,
   onSaved,
-  setServerError,
 }: {
   person: Person
   isExpanded: boolean
   onToggle: () => void
   onSaved: () => void
-  setServerError: (e: string | null) => void
 }) {
   const [isPending, startTransition] = useTransition()
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [localError, setLocalError] = useState<string | null>(null)
   const [name, setName] = useState(person.name)
   const [email, setEmail] = useState(person.email)
   const [phone, setPhone] = useState(person.phone)
@@ -135,18 +129,18 @@ function PersonRow({
 
   function handleSave() {
     startTransition(async () => {
-      setServerError(null)
+      setLocalError(null)
       const result = await updatePersonAction(person.id, { name, email, phone, skills, notes })
-      if (result?.error) { setServerError(result.error); return }
+      if (result?.error) { setLocalError(result.error); return }
       onSaved()
     })
   }
 
   function handleDelete() {
     startTransition(async () => {
-      setServerError(null)
+      setLocalError(null)
       const result = await deletePersonAction(person.id)
-      if (result?.error) { setServerError(result.error); return }
+      if (result?.error) { setLocalError(result.error); return }
       onSaved()
     })
   }
@@ -158,6 +152,7 @@ function PersonRow({
     setSkills(person.skills)
     setNotes(person.notes)
     setConfirmDelete(false)
+    setLocalError(null)
     onToggle()
   }
 
@@ -249,6 +244,8 @@ function PersonRow({
             />
           </div>
 
+          {localError && <p className="text-sm text-tally-red">{localError}</p>}
+
           <div className="flex items-center justify-between pt-1">
             <div className="flex gap-3">
               <Button type="button" onClick={handleSave} disabled={isPending}>
@@ -296,13 +293,12 @@ function PersonRow({
 function InviteForm({
   onCancel,
   onCreated,
-  setServerError,
 }: {
   onCancel: () => void
   onCreated: (link: string) => void
-  setServerError: (e: string | null) => void
 }) {
   const [isPending, startTransition] = useTransition()
+  const [localError, setLocalError] = useState<string | null>(null)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
@@ -316,12 +312,12 @@ function InviteForm({
 
   function handleSubmit() {
     startTransition(async () => {
-      setServerError(null)
+      setLocalError(null)
       const createResult = await createPersonAction({ name, email, phone, skills })
-      if ('error' in createResult) { setServerError(createResult.error); return }
+      if ('error' in createResult) { setLocalError(createResult.error); return }
 
       const linkResult = await generateAndSendInviteLinkAction(email)
-      if ('error' in linkResult) { setServerError(linkResult.error); return }
+      if ('error' in linkResult) { setLocalError(linkResult.error); return }
 
       onCreated(linkResult.link)
     })
@@ -381,6 +377,8 @@ function InviteForm({
           ))}
         </div>
       </div>
+
+      {localError && <p className="text-sm text-tally-red">{localError}</p>}
 
       <div className="flex gap-3 pt-1">
         <Button type="button" onClick={handleSubmit} disabled={isPending}>
