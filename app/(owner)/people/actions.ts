@@ -81,7 +81,7 @@ export async function createPersonAction(data: {
     .select('id')
     .single()
 
-  if (dbError) return { error: dbError.message }
+  if (dbError || !newPerson) return { error: dbError?.message ?? 'Person konnte nicht erstellt werden' }
   revalidatePath('/people')
   return { id: newPerson.id }
 }
@@ -120,7 +120,7 @@ export async function generateAndSendInviteLinkAction(
 
   if (ownerRow?.email) {
     const from = process.env.NOTIFICATION_FROM_EMAIL ?? 'EventFlow <noreply@example.com>'
-    await fetch('https://api.resend.com/emails', {
+    const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
@@ -138,7 +138,8 @@ export async function generateAndSendInviteLinkAction(
           <p>Leite diesen Link an das neue Crew-Mitglied weiter.</p>
         `,
       }),
-    }).catch(console.error)
+    })
+    if (!res.ok) return { error: `E-Mail konnte nicht gesendet werden (${res.status})` }
   }
 
   return { link }
